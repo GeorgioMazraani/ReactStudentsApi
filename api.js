@@ -4,6 +4,7 @@ const XLSX = require("xlsx");
 const path = require("path");
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 const DATA_FILE = path.join(__dirname, "students.xlsx");
 
