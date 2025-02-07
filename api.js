@@ -37,25 +37,27 @@ app.get("/students", (req, res) => {
 
 app.post("/students", (req, res) => {
   try {
-    const { id, name, gender } = req.body;
-    if (!id || !name || !gender) {
-      return res.status(400).json({ success: false, message: "All fields are required: id, name, gender." });
+    const { name, gender } = req.body;
+
+    if (!name || !gender) {
+      return res.status(400).json({ success: false, message: "All fields are required: name, gender." });
     }
 
     let students = readStudents();
-    const studentExists = students.some(student => student.id === Number(id));
-    if (studentExists) {
-      return res.status(400).json({ success: false, message: "Student ID already exists." });
-    }
 
-    students.push({ id: Number(id), name, gender }); 
+    const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1;
+
+    const newStudent = { id: newId, name, gender };
+    students.push(newStudent);
+
     writeStudents(students);
 
-    res.status(201).json({ success: true, message: "Student added successfully." });
+    res.status(201).json({ success: true, message: "Student added successfully.", data: newStudent });
   } catch (error) {
     res.status(500).json({ success: false, message: "Error writing student data." });
   }
 });
+
 
 app.delete("/students/:id", (req, res) => {
   try {
